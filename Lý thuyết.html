@@ -1,0 +1,295 @@
+
+PHẦN 1: LÝ THUYẾT
+Câu 1: CSS Position: relative vs absolute
+1. Sự khác biệt cốt lõi
+position: relative: Định vị tương đối so với vị trí tự nhiên (nguyên bản) của chính nó trong luồng văn bản (normal flow). Khi dời vị trí (top, left,...), khoảng trống ban đầu của nó vẫn được giữ nguyên, không làm xáo trộn các phần tử xung quanh.   
+
+
+position: absolute: Định vị tuyệt đối và bị tách hoàn toàn khỏi luồng văn bản (normal flow). Vị trí của nó được tính dựa trên phần tử cha gần nhất có position khác static (nếu không có sẽ tính theo <html> / viewport). Các phần tử khác sẽ lấp vào khoảng trống mà nó bỏ lại.   
+
+
+2. Ví dụ tình huống sử dụng trong Responsive Layout
+Thẻ Card chứa Badge "New/Sale":
+Thẻ cha (.card) dùng position: relative, nhãn đánh dấu (.badge) nằm góc trên bên phải dùng position: absolute; top: 10px; right: 10px;. Dù màn hình co giãn hay responsive thế nào, huy hiệu luôn dính chặt ở góc trên bên phải thẻ cha mà không làm vỡ khung text.   
+
+CSS
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+}
+3. Ảnh hưởng khi Deploy lên Hosting & Tương thích thiết bị
+Vấn đề Responsive: position: absolute dùng giá trị cố định (px) dễ gây đè lấp chữ (overlapping) trên màn hình điện thoại nhỏ do bị mất luồng văn bản.   
+
+Giải pháp:
+
+Khi deploy lên hosting, website sẽ được xem trên hàng trăm loại màn hình khác nhau.   
+JPG
+
+Hạn chế dùng absolute cho bố cục chính (layout grid, cột, hàng). Hãy ưu tiên Flexbox/Grid.   
+
+Chỉ dùng absolute cho các chi tiết phụ trang trí (icons, badges, popup overlay). Khi dùng absolute, nên dùng phần trăm (%) hoặc rem/vw kết hợp Media Queries để đảm bảo hiển thị chuẩn trên mọi thiết bị.   
+
+Câu 2: Quy trình Đăng ký Domain, Hosting & Deploy
+1. Quy trình đăng ký Domain & cấu hình Hosting
+Đăng ký Domain (Tên miền): Chọn nhà cung cấp (Namecheap, GoDaddy, PA Việt Nam...), kiểm tra tên miền chưa ai đăng ký và tiến hành mua (ví dụ: mywebsite.com).
+
+Thuê Hosting / Chọn Nền tảng: Đăng ký hosting dịch vụ hoặc chọn nền tảng Cloud/Static Host (GitHub Pages, Netlify, Vercel).   
+
+Cấu hình trỏ Domain về Hosting: Vào trình quản lý tên miền, sửa bản ghi DNS:
+
+Bản ghi A (A Record): Trỏ tên miền về IP Public của Hosting.
+
+Bản ghi CNAME: Trỏ subdomain (ví dụ: [www.mywebsite.com](https://www.mywebsite.com)) về tên miền gốc hoặc địa chỉ app host.
+
+2. Vai trò của DNS (Domain Name System)
+DNS hoạt động như một "danh bạ Internet", có nhiệm vụ biên dịch tên miền dễ nhớ đối với con người (ví dụ: google.com) thành địa chỉ IP máy tính dễ hiểu (ví dụ: 142.250.190.46) để trình duyệt có thể tìm và tải nội dung từ máy chủ hosting.   
+JPG
+
+3. Hai công cụ Deploy tĩnh không cần Server riêng (Free Static Hosting)
+GitHub Pages: Tích hợp sẵn với kho chứa Git, deploy tự động trực tiếp từ branch main/master.   
+Netlify: Hỗ trợ kéo-thả thư mục web để deploy tức thì, tự động xây dựng CI/CD từ GitHub và cấp chứng chỉ HTTPS miễn phí.
+
+4. Rủi ro bảo mật nếu cấu hình không đúng
+Lộ API Keys / Secret Tokens: Lộ key quan trọng trong code JavaScript public lên GitHub/Netlify làm kẻ xấu lợi dụng hạn mức API hoặc truy cập DB.
+
+CORS (Cross-Origin Resource Sharing) sai cấu hình: Cho phép mọi domain gửi yêu cầu đến backend, dẫn đến nguy cơ bị khai thác dữ liệu.
+
+Thiếu HTTPS (SSL/TLS): Dữ liệu người dùng truyền đi bị chặn bắt ở dạng plain text (Man-in-the-middle attack).
+Câu 3: So sánh var, let, const, Bug & Debugging1.
+Tiêu chí              var                           let                 const
+scope                 Function Scope                Block Scope         Block Scope 
+Hosting               có                            có                  có
+Khai báo lại          cho phép trong cùng scope     không cho phép      không cho phép
+Gán giá trị           cho phép                      cho phép            không cho phép
+3. Cách Debug bằng Chrome DevTools
+Mở DevTools (F12 hoặc Ctrl + Shift + I) 
+→ Chọn tab Sources.   
+
+Mở file .js chứa đoạn code cần kiểm tra.
+
+Đặt Breakpoint bằng cách nhấp chuột vào số dòng lệnh muốn dừng thực thi.   
+JPG
+
+F5 để chạy lại trang: Sử dụng các nút bấm điều khiển:
+
+Step over (F10): Chạy qua dòng tiếp theo.
+
+Step into (F11): Nhảy vào bên trong hàm.
+
+Tab Scope bên phải cho phép soi rõ giá trị thực tế của từng biến (Local, Global, Block) tại thời điểm dòng lệnh tạm dừng.
+Có (nằm trong Temporal Dead Zone - TDZ, gây lỗi nếu dùng trước khi khai báo) 
+JPG
+
+Có (nằm trong TDZ, gây lỗi nếu dùng trước khi khai báo) 
+JPG
+
+Khai báo lại	Cho phép trong cùng scope	Không cho phép	Không cho phép
+Gán lại giá trị	Cho phép	Cho phép	Không cho phép (với kiểu dữ liệu nguyên thủy)
+2. Ví dụ code lỗi thường gặp (Lỗi rò rỉ biến với var trong vòng lặp)
+JavaScript
+// LỖI: Dùng var trong vòng lặp bất đồng bộ
+for (var i = 1; i <= 3; i++) {
+  setTimeout(() => {
+    console.log("Lần " + i); // Đầu ra mong muốn: Lần 1, Lần 2, Lần 3
+  }, 1000);
+}
+// Kết quả thực tế: "Lần 4", "Lần 4", "Lần 4" (Do var có Function Scope, biến i bị ghi đè thành 4 sau vòng lặp)
+
+// SỬA LỖI: Thay var bằng let
+for (let j = 1; j <= 3; j++) {
+  setTimeout(() => {
+    console.log("Lần " + j); // Kết quả chuẩn: Lần 1, Lần 2, Lần 3 (Do let hỗ trợ Block Scope)
+  }, 1000);
+}
+3. Cách Debug bằng Chrome DevTools
+Mở DevTools (F12 hoặc Ctrl + Shift + I) 
+→ Chọn tab Sources.   
+JPG
+
+Mở file .js chứa đoạn code cần kiểm tra.
+
+Đặt Breakpoint bằng cách nhấp chuột vào số dòng lệnh muốn dừng thực thi.   
+JPG
+
+F5 để chạy lại trang: Sử dụng các nút bấm điều khiển:
+
+Step over (F10): Chạy qua dòng tiếp theo.
+
+Step into (F11): Nhảy vào bên trong hàm.
+
+Tab Scope bên phải cho phép soi rõ giá trị thực tế của từng biến (Local, Global, Block) tại thời điểm dòng lệnh tạm dừng.
+
+Câu 4: Event Delegation trong JavaScript
+1. Khái niệm Event Delegation
+Event Delegation (Ủy quyền sự kiện) là kỹ thuật tận dụng cơ chế Event Bubbling (sự kiện nổi bọt từ phần tử con lên phần tử cha) để gán một listener duy nhất cho phần tử cha, thay vì gắn nhiều listener cho từng phần tử con riêng lẻ.   
+JPG
+
+2. Ví dụ xử lý sự kiện trên danh sách động (Dynamic List)
+HTML
+<ul id="todo-list">
+  <li>Công việc 1 <button class="btn-delete">Xóa</button></li>
+  <li>Công việc 2 <button class="btn-delete">Xóa</button></li>
+</ul>
+
+<script>
+  const ul = document.getElementById('todo-list');
+
+  // Gán 1 listener duy nhất ở thẻ <ul> cha
+  ul.addEventListener('click', function(event) {
+    if (event.target && event.target.classList.contains('btn-delete')) {
+      // Tìm phần tử li cha chứa nút này và xóa
+      const li = event.target.closest('li');
+      li.remove();
+      console.log('Đã xóa 1 mục!');
+    }
+  });
+</script>
+3. Lợi ích tối ưu hiệu suất
+Tiết kiệm bộ nhớ (RAM): Thay vì gán 1,000 event listener cho 1,000 dòng dữ liệu, ta chỉ tốn đúng 1 event listener ở thẻ thẻ bao ngoài (<ul> hoặc <table>).
+Hỗ trợ phần tử thêm mới linh hoạt: Khi thêm các dòng mới bằng JavaScript dynamic render, không cần phải tốn công gán lại event cho các phần tử mới tạo này.
+PHẦN 2:THỰC HÀNH
+Bài 1
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 1: Sản phẩm</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; }
+    .card { background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ddd; text-align: center; }
+    .err { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Danh sách sản phẩm</h2>
+  <input type="text" id="kw" placeholder="Tìm kiếm..." oninput="search()">
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Laptop Dell", price: "20.000.000d" },
+      { id: 2, name: "iPhone 15", price: "25.000.000d" },
+      { id: 3, name: "Tai nghe Sony", price: "3.000.000d" },
+      { id: 4, name: "Chuột Logitech", price: "1.000.000d" },
+      { id: 5, name: "Bàn phím cơ", price: "1.500.000d" }
+    ];
+
+    function render(list) {
+      const g = document.getElementById("grid");
+      if(!list.length) return g.innerHTML = `<p class="err">Không tìm thấy!</p>`;
+      g.innerHTML = list.map(p => `<div class="card"><h3>${escapeHTML(p.name)}</h3><p>${p.price}</p></div>`).join("");
+    }
+
+    function search() {
+      const q = document.getElementById("kw").value.trim().toLowerCase();
+      render(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    // Tránh XSS Injection bằng cách encode ký tự HTML đặc biệt
+    function escapeHTML(str) {
+      const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+    }
+
+    render(products);
+  </script>
+</body>
+</html>
+
+Bài 2
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 2: Đăng ký</title>
+  <style>
+    body { font-family: Arial; display: flex; justify-content: center; padding-top: 50px; }
+    form { width: 300px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+    div { margin-bottom: 10px; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 8px; box-sizing: border-box; }
+    .err { color: red; font-size: 12px; }
+    .ok { color: green; font-weight: bold; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <form id="rf" onsubmit="save(event)">
+    <h3>Đăng Ký</h3>
+    <div id="msg"></div>
+    <div><input type="text" id="name" placeholder="Họ tên"><span id="e1" class="err"></span></div>
+    <div><input type="email" id="email" placeholder="Email"><span id="e2" class="err"></span></div>
+    <div><input type="password" id="pwd" placeholder="Mật khẩu"><span id="e3" class="err"></span></div>
+    <div><input type="checkbox" id="chk"> Đồng ý điều khoản <span id="e4" class="err"></span></div>
+    <button type="submit">Gửi</button>
+  </form>
+
+  <script>
+    function save(e) {
+      e.preventDefault();
+      document.querySelectorAll('.err').forEach(s => s.innerText = '');
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const pwd = document.getElementById('pwd').value;
+      const chk = document.getElementById('chk').checked;
+      let ok = true;
+
+      if(!name) { document.getElementById('e1').innerText = 'Nhập tên!'; ok = false; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('e2').innerText = 'Email sai!'; ok = false; }
+      if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd)) { document.getElementById('e3').innerText = 'Mật khẩu >=8 ký tự (gồm HOA, thường, số)!'; ok = false; }
+      if(!chk) { document.getElementById('e4').innerText = 'Cần đồng ý!'; ok = false; }
+
+      if(ok) {
+        localStorage.setItem('user', JSON.stringify({ name, email }));
+        document.getElementById('msg').innerHTML = '<p class="ok">Đã lưu thành công!</p>';
+        document.getElementById('rf').reset();
+      }
+    }
+  </script>
+</body>
+</html>
+
+Bài 3
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 3: Đếm ngược</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding-top: 50px; background: #222; color: #fff; }
+    #time { font-size: 60px; font-weight: bold; margin: 20px; }
+    .blink { color: red; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+  </style>
+</head>
+<body>
+  <h2>Thời gian còn lại</h2>
+  <div id="time">10:00</div>
+
+  <script>
+    let sec = 600; // 10 phút
+    const t = document.getElementById("time");
+
+    const timer = setInterval(() => {
+      let m = String(Math.floor(sec / 60)).padStart(2, '0');
+      let s = String(sec % 60).padStart(2, '0');
+      t.innerText = `${m}:${s}`;
+
+      if (sec <= 60 && sec > 0) t.classList.add("blink");
+
+      if (sec <= 0) {
+        clearInterval(timer); // Tránh Memory Leak
+        t.classList.remove("blink");
+        alert("Hết giờ!");
+      }
+      sec--;
+    }, 1000);
+  </script>
+</body>
+</html>
+
+
