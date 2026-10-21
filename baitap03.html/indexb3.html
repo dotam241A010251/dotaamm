@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 3: Đếm ngược</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding-top: 50px; background: #222; color: #fff; }
+    #time { font-size: 60px; font-weight: bold; margin: 20px; }
+    .blink { color: red; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+  </style>
+</head>
+<body>
+  <h2>Thời gian còn lại</h2>
+  <div id="time">10:00</div>
+
+  <script>
+    let sec = 600; // 10 phút
+    const t = document.getElementById("time");
+
+    const timer = setInterval(() => {
+      let m = String(Math.floor(sec / 60)).padStart(2, '0');
+      let s = String(sec % 60).padStart(2, '0');
+      t.innerText = `${m}:${s}`;
+
+      if (sec <= 60 && sec > 0) t.classList.add("blink");
+
+      if (sec <= 0) {
+        clearInterval(timer); // Tránh Memory Leak
+        t.classList.remove("blink");
+        alert("Hết giờ!");
+      }
+      sec--;
+    }, 1000);
+  </script>
+</body>
+</html>
