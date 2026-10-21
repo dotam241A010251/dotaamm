@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 1: Sản phẩm</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; }
+    .card { background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ddd; text-align: center; }
+    .err { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Danh sách sản phẩm</h2>
+  <input type="text" id="kw" placeholder="Tìm kiếm..." oninput="search()">
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Laptop Dell", price: "20.000.000d" },
+      { id: 2, name: "iPhone 15", price: "25.000.000d" },
+      { id: 3, name: "Tai nghe Sony", price: "3.000.000d" },
+      { id: 4, name: "Chuột Logitech", price: "1.000.000d" },
+      { id: 5, name: "Bàn phím cơ", price: "1.500.000d" }
+    ];
+
+    function render(list) {
+      const g = document.getElementById("grid");
+      if(!list.length) return g.innerHTML = `<p class="err">Không tìm thấy!</p>`;
+      g.innerHTML = list.map(p => `<div class="card"><h3>${escapeHTML(p.name)}</h3><p>${p.price}</p></div>`).join("");
+    }
+
+    function search() {
+      const q = document.getElementById("kw").value.trim().toLowerCase();
+      render(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    // Tránh XSS Injection bằng cách encode ký tự HTML đặc biệt
+    function escapeHTML(str) {
+      const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+    }
+
+    render(products);
+  </script>
+</body>
+</html>
