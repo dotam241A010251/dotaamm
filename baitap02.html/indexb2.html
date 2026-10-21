@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><title>Bài 2: Đăng ký</title>
+  <style>
+    body { font-family: Arial; display: flex; justify-content: center; padding-top: 50px; }
+    form { width: 300px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+    div { margin-bottom: 10px; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 8px; box-sizing: border-box; }
+    .err { color: red; font-size: 12px; }
+    .ok { color: green; font-weight: bold; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <form id="rf" onsubmit="save(event)">
+    <h3>Đăng Ký</h3>
+    <div id="msg"></div>
+    <div><input type="text" id="name" placeholder="Họ tên"><span id="e1" class="err"></span></div>
+    <div><input type="email" id="email" placeholder="Email"><span id="e2" class="err"></span></div>
+    <div><input type="password" id="pwd" placeholder="Mật khẩu"><span id="e3" class="err"></span></div>
+    <div><input type="checkbox" id="chk"> Đồng ý điều khoản <span id="e4" class="err"></span></div>
+    <button type="submit">Gửi</button>
+  </form>
+
+  <script>
+    function save(e) {
+      e.preventDefault();
+      document.querySelectorAll('.err').forEach(s => s.innerText = '');
+      
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const pwd = document.getElementById('pwd').value;
+      const chk = document.getElementById('chk').checked;
+      let ok = true;
+
+      if(!name) { document.getElementById('e1').innerText = 'Nhập tên!'; ok = false; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('e2').innerText = 'Email sai!'; ok = false; }
+      if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd)) { document.getElementById('e3').innerText = 'Mật khẩu >=8 ký tự (gồm HOA, thường, số)!'; ok = false; }
+      if(!chk) { document.getElementById('e4').innerText = 'Cần đồng ý!'; ok = false; }
+
+      if(ok) {
+        localStorage.setItem('user', JSON.stringify({ name, email }));
+        document.getElementById('msg').innerHTML = '<p class="ok">Đã lưu thành công!</p>';
+        document.getElementById('rf').reset();
+      }
+    }
+  </script>
+</body>
+</html>
